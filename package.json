@@ -1,0 +1,41 @@
+{
+  "name": "ffxiv-craft-opt-db",
+  "version": "1.0.0",
+  "description": "Backend Database for FFXIV Crafting Optimizer Website",
+  "main": "index.js",
+  "scripts": {
+    "test": "node_modules/.bin/grunt ci"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/doxxx/ffxiv-craft-opt-db"
+  },
+  "keywords": [],
+  "author": "Gordon Tyler <gordon@doxxx.net> (http://www.doxxx.net/)",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/doxxx/ffxiv-craft-opt-db/issues"
+  },
+  "dependencies": {
+    "body-parser": "^1.0.2",
+    "cookie-parser": "^1.1.0",
+    "express": "^4.1.2",
+    "express-session": "^1.1.0",
+    "express-winston": "^0.2.6",
+    "mongoose": "^3.8.8",
+    "passport": "^0.2.0",
+    "passport-local": "^1.0.0",
+    "underscore": "^1.6.0",
+    "winston": "^0.7.3"
+  },
+  "devDependencies": {
+    "grunt": "*",
+    "grunt-cli": "*",
+    "grunt-contrib-jshint": "*",
+    "grunt-contrib-watch": "*",
+    "grunt-mocha-cli": "*",
+    "grunt-complexity": "*",
+    "expect.js": "*",
+    "supertest": "*"
+  }
+}
