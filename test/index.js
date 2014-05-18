@@ -22,8 +22,7 @@ describe('ffxiv-craft-opt-db', function() {
   }
 
   function initMongoose(done) {
-    var dbName = 'ffxiv-craft-opt-db_' + process.env.USER + '_' + os.hostname().replace('.', '_');
-    mongoose.connect('mongodb://localhost/' + dbName, function () {
+    mongoose.connect('mongodb://localhost/ffxiv-craft-opt-db_test', function () {
       mongoose.connection.on('error', function(err) {
         winston.error(err);
       });
