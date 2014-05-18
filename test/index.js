@@ -91,7 +91,7 @@ describe('ffxiv-craft-opt-db', function() {
         .send({ name: 'Lucida' })
         .expect(400, done);
     });
-    it('GET should return character URI', function(done) {
+    it('GET should return character URIs', function(done) {
       agent.get('/chars')
         .expect(200)
         .end(function(err, res) {
