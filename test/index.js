@@ -43,7 +43,9 @@ describe('ffxiv-craft-opt-db', function() {
 
   var agent = request.agent(server.app);
   var charURIs = [],
-    chars = {};
+    chars = {},
+    synthURIs = [],
+    synths = {};
 
   describe('/users', function() {
     it('POST should create a new user', function(done) {
@@ -125,6 +127,71 @@ describe('ffxiv-craft-opt-db', function() {
             expect(res.body.name).to.be(newName);
             done();
           });
+      });
+    });
+  });
+  describe('/synths', function () {
+    it('GET should return nothing before synths created', function (done) {
+      agent.get('/synths')
+        .expect(200)
+        .end(function (err, res) {
+          if (err) throw err;
+          expect(res.body).to.be.empty();
+          done();
+        });
+    });
+    it('POST should create synth', function (done) {
+      agent.post('/synths')
+        .send({ name: 'test' })
+        .expect(200, done);
+    });
+    it('POST should not create duplicate synth', function (done) {
+      agent.post('/synths')
+        .send({ name: 'test' })
+        .expect(400, done);
+    });
+    it('GET should return synth URIs after synths created', function (done) {
+      agent.get('/synths')
+        .expect(200)
+        .end(function (err, res) {
+          if (err) throw err;
+          expect(res.body).to.have.length(1);
+          synthURIs = res.body;
+          done();
+        });
+    });
+  });
+  describe('/synths/<id>', function () {
+    it('GET should return synth details', function (done) {
+      _.each(synthURIs, function (uri) {
+        agent.get(uri)
+          .expect(200)
+          .end(function (err, res) {
+            if (err) throw err;
+            expect(res.body).to.include.keys('_id', 'name');
+            synths[uri] = res.body;
+            done();
+          });
+      });
+    });
+    it('PUT should replace synth details', function (done) {
+      _.each(synthURIs, function (uri) {
+        agent.put(uri)
+          .send({ recipeName: 'test recipe' })
+          .expect(200)
+          .end(function (err, res) {
+            if (err) throw err;
+            expect(res.body).to.include.keys('_id', 'name', 'recipeName');
+            expect(res.body.name).to.be('test');
+            expect(res.body.recipeName).to.be('test recipe');
+            done();
+          });
+      });
+    });
+    it ('DELETE should delete synth', function (done) {
+      _.each(synthURIs, function (uri) {
+        agent.delete(uri)
+          .expect(200, done);
       });
     });
   });

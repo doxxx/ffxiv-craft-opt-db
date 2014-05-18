@@ -1,3 +1,4 @@
+var _ = require('underscore');
 var mongoose = require('mongoose');
 
 var classSchema = mongoose.Schema({
@@ -49,6 +50,35 @@ userSchema.statics.createUser = function(email, password, cb) {
     }
     else {
       if (cb) cb(null, user);
+    }
+  });
+};
+
+userSchema.methods.findSynth = function (name, cb) {
+  var Synth = this.model('Synth');
+  Synth.findOne({ user_id: this._id, name: name }, function (err, synth) {
+    if (err) {
+      if (cb) cb(err, null);
+    }
+    else {
+      if (cb) cb(null, synth);
+    }
+  });
+};
+
+userSchema.methods.createSynth = function (contents, cb) {
+  var Synth = this.model('Synth');
+  var synth = {
+    user_id: this._id
+  };
+  _.extend(synth, contents);
+  synth = new Synth(synth);
+  synth.save(function (err) {
+    if (err) {
+      if (cb) cb(err, null);
+    }
+    else {
+      if (cb) cb(null, synth);
     }
   });
 };
