@@ -8,6 +8,7 @@ exports.setup = function(app, handlers) {
   app.post('/chars', handlers.createChar);
   app.get('/chars', handlers.getChars);
   app.get('/chars/:char', handlers.getChar);
+  app.put('/chars/:char', handlers.updateChar);
 
   app.param('char', handlers.charParam);
 };

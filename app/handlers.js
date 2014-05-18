@@ -88,5 +88,30 @@ module.exports = {
     else {
       res.json(req.char);
     }
+  },
+  updateChar: function (req, res) {
+    if (!req.user) {
+      res.send(401);
+    }
+    else if (!req.char) {
+      res.send(400);
+    }
+    else {
+      var name = req.body.name;
+      if (!name) {
+        res.send(400);
+      }
+      else {
+        req.char.name = name;
+        req.user.save(function (err) {
+          if (err) {
+            res.json(500, err);
+          }
+          else {
+            res.send(200, req.char);
+          }
+        });
+      }
+    }
   }
 };

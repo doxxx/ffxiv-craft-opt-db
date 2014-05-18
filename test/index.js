@@ -42,7 +42,8 @@ describe('ffxiv-craft-opt-db', function() {
   });
 
   var agent = request.agent(server.app);
-  var charURIs;
+  var charURIs = [],
+    chars = {};
 
   describe('/users', function() {
     it('POST should create a new user', function(done) {
@@ -107,6 +108,21 @@ describe('ffxiv-craft-opt-db', function() {
           .end(function(err, res) {
             if (err) throw err;
             expect(res.body).to.include.keys('_id', 'name', 'classes');
+            chars[uri] = res.body;
+            done();
+          });
+      });
+    });
+    it('PUT should replace character details', function(done) {
+      _.each(charURIs, function(uri) {
+        var newName = chars[uri].name + 'xxx';
+        agent.put(uri)
+          .send({ name: newName })
+          .expect(200)
+          .end(function(err, res) {
+            if (err) throw err;
+            expect(res.body).to.include.keys('_id', 'name', 'classes');
+            expect(res.body.name).to.be(newName);
             done();
           });
       });
