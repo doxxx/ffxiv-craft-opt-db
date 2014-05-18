@@ -136,6 +136,25 @@ module.exports = {
       }
     }
   },
+  deleteChar: function (req, res) {
+    if (!req.user) {
+      res.send(401);
+    }
+    else if (!req.char) {
+      res.send(400);
+    }
+    else {
+      req.char.remove();
+      req.user.save(function (err) {
+        if (err) {
+          res.json(500, err);
+        }
+        else {
+          res.send(200);
+        }
+      });
+    }
+  },
 
   createSynth: function (req, res) {
     if (!req.user) {

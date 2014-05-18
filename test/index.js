@@ -129,6 +129,12 @@ describe('ffxiv-craft-opt-db', function() {
           });
       });
     });
+    it('DELETE should delete character', function (done) {
+      _.each(charURIs, function (uri) {
+        agent.delete(uri)
+          .expect(200, done);
+      });
+    });
   });
   describe('/synths', function () {
     it('GET should return nothing before synths created', function (done) {

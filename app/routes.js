@@ -9,6 +9,7 @@ exports.setup = function(app, handlers) {
   app.get('/chars', handlers.getChars);
   app.get('/chars/:char', handlers.getChar);
   app.put('/chars/:char', handlers.updateChar);
+  app.delete('/chars/:char', handlers.deleteChar);
 
   app.post('/synths', handlers.createSynth);
   app.get('/synths', handlers.getSynths);
