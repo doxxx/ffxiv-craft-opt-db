@@ -1,4 +1,3 @@
-var models = require('./models');
 var passport = require('passport');
 
 exports.setup = function(app, handlers) {
