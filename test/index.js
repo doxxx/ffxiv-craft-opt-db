@@ -101,8 +101,8 @@ describe('ffxiv-craft-opt-db', function() {
   });
   describe('/chars/<id>', function() {
     it('GET should return character details', function(done) {
-      _.each(charURIs, function(char) {
-        agent.get(charURIs)
+      _.each(charURIs, function(uri) {
+        agent.get(uri)
           .expect(200)
           .end(function(err, res) {
             if (err) throw err;
