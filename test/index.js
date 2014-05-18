@@ -16,27 +16,19 @@ describe('ffxiv-craft-opt-db', function() {
   }
 
   function initData(done) {
-    models.User.createUser('foo@bar.com', '123', function(err, u) {
-      if (err) {
-        console.error(err.stack);
-      }
-      else {
-        u.chars.push({name:"Lucida"});
-        u.save();
-        user = u;
-      }
-      done();
+    models.User.remove({}, function() {
+      models.Synth.remove({}, done);
     });
   }
 
   function initMongoose(done) {
     var dbName = 'ffxiv-craft-opt-db_' + process.env.USER + '_' + os.hostname().replace('.', '_');
     mongoose.connect('mongodb://localhost/' + dbName, function () {
+      mongoose.connection.on('error', function(err) {
+        winston.error(err);
+      });
       server.start(2999); // don't clash with running server
       initData(done);
-    });
-    mongoose.connection.on('error', function(err) {
-      winston.error(err);
     });
   }
 
@@ -50,37 +42,62 @@ describe('ffxiv-craft-opt-db', function() {
   });
 
   var agent = request.agent(server.app);
+  var charURIs;
 
+  describe('/users', function() {
+    it('PUT should create a new user', function(done) {
+      agent.put('/users')
+        .send({email: 'foo@bar.com', password: '123'})
+        .expect(200, done);
+    });
+    it('PUT should not create a duplicate user', function (done) {
+      agent.put('/users')
+        .send({email: 'foo@bar.com', password: '123'})
+        .expect(400, done);
+    });
+  });
   describe('/login', function() {
-    it('should reject an incorrect email/password', function(done) {
+    it('POST should reject an incorrect email/password', function(done) {
       agent.post('/login')
         .send({username: 'does.not@exist', password: 'blah'})
         .expect(401, done);
     });
-    it('should accept a correct email and password', function(done) {
+    it('POST should accept a correct email and password', function(done) {
       agent.post('/login')
         .send({username: 'foo@bar.com', password: '123'})
         .expect(200, done);
     });
   });
   describe('/chars', function () {
-    it('should return character URIs', function(done) {
-      var uris = _.map(user.chars, function(c) { return '/chars/' + c._id; });
+    it('GET should return nothing before characters created', function(done) {
       agent.get('/chars')
         .expect(200)
         .end(function(err, res) {
           if (err) throw err;
-          _.each(uris, function(uri) {
-            expect(res.body).to.contain(uri);
-          });
+          expect(res.body).to.empty();
+          done();
+        });
+    });
+    it('PUT should create character', function(done) {
+      agent.put('/chars')
+        .send({ name: 'Lucida' })
+        .expect(200, done);
+    });
+    it('GET should return character URI', function(done) {
+      agent.get('/chars')
+        .expect(200)
+        .end(function(err, res) {
+          if (err) throw err;
+          expect(res.body).to.have.length(1);
+          charURIs = res.body;
           done();
         });
     });
   });
   describe('/chars/<id>', function() {
-    it('should return character details', function(done) {
-      _.each(user.chars, function(char) {
-        agent.get('/chars/' + char._id)
+    it('GET should return character details', function(done) {
+      _.each(charURIs, function(char) {
+        agent.get(charURIs)
           .expect(200)
           .end(function(err, res) {
             if (err) throw err;

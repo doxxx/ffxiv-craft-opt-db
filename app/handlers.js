@@ -21,26 +21,52 @@ module.exports = {
       res.send(400);
     }
     else {
-      console.log('newUser: ' + email);
-      models.User.create({email: email}, function (err, user) {
+      models.User.findByEmail(email, function(err, user) {
         if (err) {
           res.json(500, err);
         }
-        else if (!user) {
-          res.json(500, { error: 'invalid email' });
+        else if (user) {
+          res.json(400, { error: 'invalid email' });
         }
         else {
-          res.json(user);
+          models.User.createUser(email, password, function (err, user) {
+            if (err) {
+              res.json(500, err);
+            }
+            else if (!user) {
+              res.json(400, { error: 'invalid email' });
+            }
+            else {
+              res.send(200);
+            }
+          });
         }
       });
     }
   },
-  getUser: function (req, res) {
-    if (req.user) {
-      res.send(req.user);
+  createChar: function (req, res) {
+    if (!req.user) {
+      res.send(401);
     }
     else {
-      res.send(401);
+      var name = req.body.name;
+      if (!name) {
+        res.send(400);
+      }
+      else {
+        var char = _.findWhere(req.user.chars, { name: name });
+        if (!char) {
+          req.user.chars.push({ name: name });
+          req.user.save(function(err) {
+            if (err) {
+              res.json(500, err);
+            }
+            else {
+              res.send(200);
+            }
+          });
+        }
+      }
     }
   },
   getChars: function (req, res) {
