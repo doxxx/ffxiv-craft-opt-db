@@ -45,13 +45,13 @@ describe('ffxiv-craft-opt-db', function() {
   var charURIs;
 
   describe('/users', function() {
-    it('PUT should create a new user', function(done) {
-      agent.put('/users')
+    it('POST should create a new user', function(done) {
+      agent.post('/users')
         .send({email: 'foo@bar.com', password: '123'})
         .expect(200, done);
     });
-    it('PUT should not create a duplicate user', function (done) {
-      agent.put('/users')
+    it('POST should not create a duplicate user', function (done) {
+      agent.post('/users')
         .send({email: 'foo@bar.com', password: '123'})
         .expect(400, done);
     });
@@ -78,8 +78,8 @@ describe('ffxiv-craft-opt-db', function() {
           done();
         });
     });
-    it('PUT should create character', function(done) {
-      agent.put('/chars')
+    it('POST should create character', function(done) {
+      agent.post('/chars')
         .send({ name: 'Lucida' })
         .expect(200, done);
     });
