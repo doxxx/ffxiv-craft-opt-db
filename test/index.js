@@ -83,6 +83,11 @@ describe('ffxiv-craft-opt-db', function() {
         .send({ name: 'Lucida' })
         .expect(200, done);
     });
+    it('POST should not create duplicate character', function(done) {
+      agent.post('/chars')
+        .send({ name: 'Lucida' })
+        .expect(400, done);
+    });
     it('GET should return character URI', function(done) {
       agent.get('/chars')
         .expect(200)

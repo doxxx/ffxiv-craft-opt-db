@@ -55,9 +55,11 @@ module.exports = {
       }
       else {
         var char = _.findWhere(req.user.chars, { name: name });
-        if (!char) {
+        if (char) {
+          res.send(400);
+        } else {
           req.user.chars.push({ name: name });
-          req.user.save(function(err) {
+          req.user.save(function (err) {
             if (err) {
               res.json(500, err);
             }
