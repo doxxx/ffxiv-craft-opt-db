@@ -39,7 +39,7 @@ module.exports = {
     var email = req.body.email;
     var password = req.body.password;
     if (!email || !password) {
-      res.send(400);
+      res.send(400, { error: 'must provide email and password' });
     }
     else {
       models.User.findByEmail(email, function(err, user) {
