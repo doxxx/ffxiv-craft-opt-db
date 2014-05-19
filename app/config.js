@@ -1,4 +1,5 @@
 module.exports = {
+  allowedDomains: 'http://localhost:8001',
   db: {
     mongodb: 'mongodb://localhost/ffxiv-craft-opt-web'
   },
