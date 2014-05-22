@@ -87,7 +87,7 @@ var synthSchema = mongoose.Schema({
   recipeName: String,
   level: Number,
   difficulty: Number,
-  durabilty: Number,
+  durability: Number,
   max_quality: Number
 });
 
