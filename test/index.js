@@ -102,7 +102,7 @@ describe('ffxiv-craft-opt-db', function() {
           .expect(200)
           .end(function(err, res) {
             if (err) throw err;
-            expect(res.body).to.include.keys('_id', 'name', 'classes');
+            expect(res.body).to.include.keys('name', 'classes');
             chars[uri] = res.body;
             done();
           });
@@ -116,7 +116,7 @@ describe('ffxiv-craft-opt-db', function() {
           .expect(200)
           .end(function(err, res) {
             if (err) throw err;
-            expect(res.body).to.include.keys('_id', 'name', 'classes');
+            expect(res.body).to.include.keys('name', 'classes');
             expect(res.body.name).to.be(newName);
             done();
           });
@@ -167,7 +167,7 @@ describe('ffxiv-craft-opt-db', function() {
           .expect(200)
           .end(function (err, res) {
             if (err) throw err;
-            expect(res.body).to.include.keys('_id', 'name');
+            expect(res.body).to.include.keys('name');
             synths[uri] = res.body;
             done();
           });
@@ -180,7 +180,7 @@ describe('ffxiv-craft-opt-db', function() {
           .expect(200)
           .end(function (err, res) {
             if (err) throw err;
-            expect(res.body).to.include.keys('_id', 'name', 'recipeName');
+            expect(res.body).to.include.keys('name', 'recipeName');
             expect(res.body.name).to.be('test');
             expect(res.body.recipeName).to.be('test recipe');
             done();

@@ -3,6 +3,32 @@ var models = require('./models');
 
 var EMAIL_RE = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
 
+function stripModelMetadata(obj) {
+  if (!(obj instanceof Object)) return obj;
+  if (obj.toObject) obj = obj.toObject();
+  var stripped = {};
+  for (var key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      if (key.charAt(0) !== '_') {
+        var val = obj[key];
+        if (val instanceof Array) {
+          var arr = [];
+          for (var i = 0; i < val.length; i++) {
+            var elem = val[i];
+            arr.push(stripModelMetadata(elem));
+          }
+          val = arr;
+        }
+        else if (val instanceof Object) {
+          val = stripModelMetadata(val);
+        }
+        stripped[key] = val;
+      }
+    }
+  }
+  return stripped;
+}
+
 module.exports = {
   loginSuccess: function(req, res) {
     res.send(200);
@@ -105,7 +131,7 @@ module.exports = {
       res.send(500);
     }
     else {
-      res.json(req.char);
+      res.json(stripModelMetadata(req.char));
     }
   },
   updateChar: function (req, res) {
@@ -122,15 +148,15 @@ module.exports = {
       }
       else {
         req.char.name = name;
-        req.user.save(function (err) {
-          if (err) {
-            res.json(500, err);
-          }
-          else {
-            res.send(200, req.char);
-          }
-        });
-      }
+      req.user.save(function (err) {
+        if (err) {
+          res.json(500, err);
+        }
+        else {
+          res.json(stripModelMetadata(req.char));
+        }
+      });
+    }
     }
   },
   deleteChar: function (req, res) {
@@ -203,7 +229,7 @@ module.exports = {
       res.send(500);
     }
     else {
-      res.json(req.synth);
+      res.json(stripModelMetadata(req.synth));
     }
   },
   updateSynth: function (req, res) {
@@ -217,7 +243,7 @@ module.exports = {
           res.json(500, err);
         }
         else {
-          res.json(req.synth);
+          res.json(stripModelMetadata(req.synth));
         }
       });
     }
