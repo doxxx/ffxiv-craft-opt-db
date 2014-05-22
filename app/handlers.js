@@ -109,7 +109,11 @@ module.exports = {
               res.json(500, err);
             }
             else {
-              res.send(200);
+              char = _.findWhere(req.user.chars, { name: name });
+              res.json({
+                name: char.name,
+                uri: char._id
+              });
             }
           });
         }
@@ -193,11 +197,14 @@ module.exports = {
             res.send(400);
           }
           else {
-            req.user.createSynth(req.body, function (err) {
+            req.user.createSynth(req.body, function (err, synth) {
               if (err) {
                 res.json(500, err);
               }
-              res.send(200);
+              res.json({
+                name: synth.name,
+                uri: synth._id
+              });
             });
           }
         });

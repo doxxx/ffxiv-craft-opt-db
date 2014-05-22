@@ -98,7 +98,14 @@ describe('ffxiv-craft-opt-db', function() {
     it('POST should create character', function(done) {
       agent.post('/chars')
         .send(exampleChar)
-        .expect(200, done);
+        .expect(200)
+        .end(function (err, res) {
+          if (err) throw err;
+          expect(res.body).to.include.keys('name', 'uri');
+          expect(res.body.name).to.be(exampleChar.name);
+          charURI = '/chars/' + res.body.uri;
+          done();
+        });
     });
     it('POST should not create duplicate character', function(done) {
       agent.post('/chars')
@@ -113,7 +120,7 @@ describe('ffxiv-craft-opt-db', function() {
           expect(res.body).to.have.length(1);
           expect(res.body[0]).to.include.keys('name', 'uri');
           expect(res.body[0].name).to.be(exampleChar.name);
-          charURI = '/chars/' + res.body[0].uri;
+          expect('/chars/' + res.body[0].uri).to.be(charURI);
           done();
         });
     });
@@ -158,7 +165,14 @@ describe('ffxiv-craft-opt-db', function() {
     it('POST should create synth', function (done) {
       agent.post('/synths')
         .send(exampleSynth)
-        .expect(200, done);
+        .expect(200)
+        .end(function (err, res) {
+          if (err) throw err;
+          expect(res.body).to.include.keys('name', 'uri');
+          expect(res.body.name).to.be(exampleSynth.name);
+          synthURI = '/synths/' + res.body.uri;
+          done();
+        });
     });
     it('POST should not create duplicate synth', function (done) {
       agent.post('/synths')
@@ -173,7 +187,7 @@ describe('ffxiv-craft-opt-db', function() {
           expect(res.body).to.have.length(1);
           expect(res.body[0]).to.include.keys('name', 'uri');
           expect(res.body[0].name).to.be(exampleSynth.name);
-          synthURI = '/synths/' + res.body[0].uri;
+          expect('/synths/' + res.body[0].uri).to.be(synthURI);
           done();
         });
     });
