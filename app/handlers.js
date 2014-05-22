@@ -103,7 +103,7 @@ module.exports = {
         if (char) {
           res.send(400);
         } else {
-          req.user.chars.push({ name: name });
+          req.user.chars.push(req.body);
           req.user.save(function (err) {
             if (err) {
               res.json(500, err);
@@ -142,12 +142,7 @@ module.exports = {
       res.send(400);
     }
     else {
-      var name = req.body.name;
-      if (!name) {
-        res.send(400);
-      }
-      else {
-        req.char.name = name;
+      _.extend(req.char, req.body);
       req.user.save(function (err) {
         if (err) {
           res.json(500, err);
@@ -156,7 +151,6 @@ module.exports = {
           res.json(stripModelMetadata(req.char));
         }
       });
-    }
     }
   },
   deleteChar: function (req, res) {

@@ -30,8 +30,22 @@ describe('ffxiv-craft-opt-db', function() {
   });
 
   var agent = request.agent(server.app);
-  var charURIs = [],
-    chars = {},
+  var exampleChar = {
+    name: 'Lucida',
+    classes: [
+      {
+        name: 'Alchemist',
+        stats: {
+          level: 1,
+          craftsmanship: 2,
+          control: 3,
+          cp: 4,
+          actions: [ 'basicSynthesis' ]
+        }
+      }
+    ]
+  };
+  var charURI,
     synthURIs = [],
     synths = {};
 
@@ -76,12 +90,12 @@ describe('ffxiv-craft-opt-db', function() {
     });
     it('POST should create character', function(done) {
       agent.post('/chars')
-        .send({ name: 'Lucida' })
+        .send(exampleChar)
         .expect(200, done);
     });
     it('POST should not create duplicate character', function(done) {
       agent.post('/chars')
-        .send({ name: 'Lucida' })
+        .send(exampleChar)
         .expect(400, done);
     });
     it('GET should return character URIs', function(done) {
@@ -90,43 +104,36 @@ describe('ffxiv-craft-opt-db', function() {
         .end(function(err, res) {
           if (err) throw err;
           expect(res.body).to.have.length(1);
-          charURIs = res.body;
+          charURI = res.body[0];
           done();
         });
     });
   });
   describe('/chars/<id>', function() {
     it('GET should return character details', function(done) {
-      _.each(charURIs, function(uri) {
-        agent.get(uri)
-          .expect(200)
-          .end(function(err, res) {
-            if (err) throw err;
-            expect(res.body).to.include.keys('name', 'classes');
-            chars[uri] = res.body;
-            done();
-          });
-      });
+      agent.get(charURI)
+        .expect(200)
+        .end(function(err, res) {
+          if (err) throw err;
+          expect(res.body).to.eql(exampleChar);
+          done();
+        });
     });
     it('PUT should replace character details', function(done) {
-      _.each(charURIs, function(uri) {
-        var newName = chars[uri].name + 'xxx';
-        agent.put(uri)
-          .send({ name: newName })
-          .expect(200)
-          .end(function(err, res) {
-            if (err) throw err;
-            expect(res.body).to.include.keys('name', 'classes');
-            expect(res.body.name).to.be(newName);
-            done();
-          });
-      });
+      var updatedChar = _.clone(exampleChar);
+      updatedChar.name += 'xxx';
+      agent.put(charURI)
+        .send({ name: updatedChar.name })
+        .expect(200)
+        .end(function(err, res) {
+          if (err) throw err;
+          expect(res.body).to.eql(updatedChar);
+          done();
+        });
     });
     it('DELETE should delete character', function (done) {
-      _.each(charURIs, function (uri) {
-        agent.delete(uri)
-          .expect(200, done);
-      });
+      agent.delete(charURI)
+        .expect(200, done);
     });
   });
   describe('/synths', function () {
