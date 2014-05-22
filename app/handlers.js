@@ -223,7 +223,9 @@ module.exports = {
       res.send(500);
     }
     else {
-      res.json(stripModelMetadata(req.synth));
+      var synth = stripModelMetadata(req.synth);
+      delete synth.user_id;
+      res.json(synth);
     }
   },
   updateSynth: function (req, res) {
@@ -237,7 +239,9 @@ module.exports = {
           res.json(500, err);
         }
         else {
-          res.json(stripModelMetadata(req.synth));
+          var synth = stripModelMetadata(req.synth);
+          delete synth.user_id;
+          res.json(synth);
         }
       });
     }
