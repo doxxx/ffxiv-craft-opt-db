@@ -54,7 +54,7 @@ userSchema.statics.createUser = function(email, password, cb) {
   });
 };
 
-userSchema.methods.findSynth = function (name, cb) {
+userSchema.methods.findSynthByName = function (name, cb) {
   var Synth = this.model('Synth');
   Synth.findOne({ user_id: this._id, name: name }, function (err, synth) {
     if (err) {

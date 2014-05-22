@@ -165,7 +165,7 @@ module.exports = {
         res.send(400);
       }
       else {
-        req.user.findSynth(req.body.name, function (err, synth) {
+        req.user.findSynthByName(req.body.name, function (err, synth) {
           if (err) {
             res.json(500, err);
           }
