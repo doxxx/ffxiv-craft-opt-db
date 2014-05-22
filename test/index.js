@@ -105,13 +105,15 @@ describe('ffxiv-craft-opt-db', function() {
         .send(exampleChar)
         .expect(400, done);
     });
-    it('GET should return character URIs', function(done) {
+    it('GET should return character names and URIs after characters created', function(done) {
       agent.get('/chars')
         .expect(200)
         .end(function(err, res) {
           if (err) throw err;
           expect(res.body).to.have.length(1);
-          charURI = res.body[0];
+          expect(res.body[0]).to.include.keys('name', 'uri');
+          expect(res.body[0].name).to.be(exampleChar.name);
+          charURI = '/chars/' + res.body[0].uri;
           done();
         });
     });
@@ -163,13 +165,15 @@ describe('ffxiv-craft-opt-db', function() {
         .send(exampleSynth)
         .expect(400, done);
     });
-    it('GET should return synth URIs after synths created', function (done) {
+    it('GET should return synth names and URIs after synths created', function (done) {
       agent.get('/synths')
         .expect(200)
         .end(function (err, res) {
           if (err) throw err;
           expect(res.body).to.have.length(1);
-          synthURI = res.body[0];
+          expect(res.body[0]).to.include.keys('name', 'uri');
+          expect(res.body[0].name).to.be(exampleSynth.name);
+          synthURI = '/synths/' + res.body[0].uri;
           done();
         });
     });

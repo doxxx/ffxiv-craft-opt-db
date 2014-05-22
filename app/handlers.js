@@ -122,7 +122,10 @@ module.exports = {
     }
     else {
       res.json(_.map(req.user.chars, function (char) {
-        return '/chars/' + char._id;
+        return {
+          name: char.name,
+          uri: char._id
+        };
       }));
     }
   },
@@ -212,7 +215,10 @@ module.exports = {
         }
         else {
           res.json(_.map(synths, function (synth) {
-            return '/synths/' + synth._id;
+            return {
+              name: synth.name,
+              uri: synth._id
+            };
           }));
         }
       });
