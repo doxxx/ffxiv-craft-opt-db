@@ -189,7 +189,7 @@ module.exports = {
       res.send(401);
     }
     else {
-      models.Synth.find({ user_id: req.user._id }, function (err, synths) {
+      req.user.findAllSynths(function (err, synths) {
         if (err) {
           res.json(500, err);
         }

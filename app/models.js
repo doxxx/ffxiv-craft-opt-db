@@ -54,6 +54,17 @@ userSchema.statics.createUser = function(email, password, cb) {
   });
 };
 
+userSchema.methods.findAllSynths = function (cb) {
+  this.model('Synth').find({ user_id: this._id }, function (err, synths) {
+    if (err) {
+      cb(err, null);
+    }
+    else {
+      cb(null, synths);
+    }
+  });
+};
+
 userSchema.methods.findSynthByName = function (name, cb) {
   var Synth = this.model('Synth');
   Synth.findOne({ user_id: this._id, name: name }, function (err, synth) {
