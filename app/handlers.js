@@ -230,7 +230,7 @@ module.exports = {
       res.send(500);
     }
     else {
-      models.Synth.remove({ _id: req.synth._id }, function (err) {
+      req.synth.remove(function (err) {
         if (err) {
           res.json(500, err);
         }
