@@ -28,22 +28,6 @@ userSchema.plugin(passportLocalMongoose);
 
 userSchema.index({username: 1});
 
-userSchema.methods.validatePassword = function(password) {
-  return this.password === password;
-};
-
-userSchema.statics.findByUsername = function(username, cb) {
-  var User = this.model('User');
-  User.findOne({username: username}).exec(function (err, user) {
-    if (err) {
-      if (cb) cb(err, null);
-    }
-    else {
-      if (cb) cb(null, user);
-    }
-  });
-};
-
 userSchema.statics.createUser = function(username, password, cb) {
   var User = this.model('User');
   var user = new User({ username: username, password: password });
