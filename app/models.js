@@ -1,5 +1,6 @@
 var _ = require('underscore');
 var mongoose = require('mongoose');
+var passportLocalMongoose = require('passport-local-mongoose');
 
 var classSchema = mongoose.Schema({
   name: String,
@@ -18,20 +19,22 @@ var charSchema = mongoose.Schema({
 });
 
 var userSchema = mongoose.Schema({
-  email: String,
+  username: String,
   password: String,
   chars: [charSchema]
 });
 
-userSchema.index({email: 1});
+userSchema.plugin(passportLocalMongoose);
+
+userSchema.index({username: 1});
 
 userSchema.methods.validatePassword = function(password) {
   return this.password === password;
 };
 
-userSchema.statics.findByEmail = function(email, cb) {
+userSchema.statics.findByUsername = function(username, cb) {
   var User = this.model('User');
-  User.findOne({email: email}).exec(function (err, user) {
+  User.findOne({username: username}).exec(function (err, user) {
     if (err) {
       if (cb) cb(err, null);
     }
@@ -41,9 +44,9 @@ userSchema.statics.findByEmail = function(email, cb) {
   });
 };
 
-userSchema.statics.createUser = function(email, password, cb) {
+userSchema.statics.createUser = function(username, password, cb) {
   var User = this.model('User');
-  var user = new User({ email: email, password: password });
+  var user = new User({ username: username, password: password });
   user.save(function (err) {
     if (err) {
       if (cb) cb(err, null);

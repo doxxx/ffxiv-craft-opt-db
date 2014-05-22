@@ -49,22 +49,27 @@ describe('ffxiv-craft-opt-db', function() {
   describe('/users', function() {
     it('POST should create a new user', function(done) {
       agent.post('/users')
-        .send({email: 'foo@bar.com', password: '123'})
+        .send({username: 'foo@bar.com', password: '123'})
         .expect(200, done);
     });
     it('POST should not create a duplicate user', function (done) {
       agent.post('/users')
-        .send({email: 'foo@bar.com', password: '123'})
+        .send({username: 'foo@bar.com', password: '123'})
+        .expect(400, done);
+    });
+    it('POST should not accept username which is not valid email', function (done) {
+      agent.post('/users')
+        .send({username: 'bob', password: '123'})
         .expect(400, done);
     });
   });
   describe('/login', function() {
-    it('POST should reject an incorrect email/password', function(done) {
+    it('POST should reject an incorrect username/password', function(done) {
       agent.post('/login')
         .send({username: 'does.not@exist', password: 'blah'})
         .expect(401, done);
     });
-    it('POST should accept a correct email and password', function(done) {
+    it('POST should accept a correct username and password', function(done) {
       agent.post('/login')
         .send({username: 'foo@bar.com', password: '123'})
         .expect(200, done);

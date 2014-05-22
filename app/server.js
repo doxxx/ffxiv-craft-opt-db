@@ -32,25 +32,11 @@ app.use(session({secret: 'funky chicken'}));
 app.use(passport.initialize());
 app.use(passport.session());
 
-passport.use(new passportLocal.Strategy(function(username, password, done) {
-  models.User.findOne({email: username}, function(err, user) {
-    if (err) return done(err);
-    if (!user || !user.validatePassword(password)) {
-      return done(null, false, { message: 'Invalid login' });
-    }
-    return done(null, user);
-  });
-}));
+passport.use(new passportLocal.Strategy(models.User.authenticate()));
 
-passport.serializeUser(function(user, done) {
-  done(null, user._id);
-});
+passport.serializeUser(models.User.serializeUser());
 
-passport.deserializeUser(function(id, done) {
-  models.User.findById(id, function(err, user) {
-    done(err, user);
-  });
-});
+passport.deserializeUser(models.User.deserializeUser());
 
 //CORS middleware
 var allowCrossDomain = function(req, res, next) {

@@ -1,8 +1,15 @@
 var _ = require('underscore');
 var models = require('./models');
 
+var EMAIL_RE = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
+
 module.exports = {
   loginSuccess: function(req, res) {
+    res.send(200);
+  },
+
+  logout: function (req, res) {
+    req.logout();
     res.send(200);
   },
 
@@ -36,31 +43,21 @@ module.exports = {
   },
 
   newUser: function (req, res) {
-    var email = req.body.email;
+    var username = req.body.username;
     var password = req.body.password;
-    if (!email || !password) {
-      res.send(400, { error: 'must provide email and password' });
+    if (!username || !password) {
+      res.send(400, { error: 'must provide username and password' });
+    }
+    else if (!EMAIL_RE.test(username)) {
+      res.send(400, { error: 'username must be valid email'});
     }
     else {
-      models.User.findByEmail(email, function(err, user) {
+      models.User.register(new models.User({ username: username }), password, function (err, user) {
         if (err) {
-          res.json(500, err);
-        }
-        else if (user) {
-          res.json(400, { error: 'invalid email' });
+          res.json(400, { error: err });
         }
         else {
-          models.User.createUser(email, password, function (err, user) {
-            if (err) {
-              res.json(500, err);
-            }
-            else if (!user) {
-              res.json(400, { error: 'invalid email' });
-            }
-            else {
-              res.send(200);
-            }
-          });
+          res.send(200);
         }
       });
     }
