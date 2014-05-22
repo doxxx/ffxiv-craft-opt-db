@@ -1,5 +1,3 @@
-var os = require('os');
-var winston = require('winston');
 var server = require('../app/server');
 var mongoose = require('mongoose');
 var models = require('../app/models');
@@ -10,11 +8,6 @@ var _ = require('underscore');
 describe('ffxiv-craft-opt-db', function() {
   var user;
 
-  function initWinston() {
-    winston.remove(winston.transports.Console);
-    winston.handleExceptions(new winston.transports.Console());
-  }
-
   function initData(done) {
     models.User.remove({}, function() {
       models.Synth.remove({}, done);
@@ -23,16 +16,12 @@ describe('ffxiv-craft-opt-db', function() {
 
   function initMongoose(done) {
     mongoose.connect('mongodb://localhost/ffxiv-craft-opt-db_test', function () {
-      mongoose.connection.on('error', function(err) {
-        winston.error(err);
-      });
       server.start(2999); // don't clash with running server
       initData(done);
     });
   }
 
   before(function(done) {
-    initWinston();
     initMongoose(done);
   });
 
