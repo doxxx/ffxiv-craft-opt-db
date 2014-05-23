@@ -98,6 +98,18 @@ describe('ffxiv-craft-opt-db', function() {
         .expect(400, done);
     });
   });
+  describe('/chars', function () {
+    it('should reject unauthorized access', function (done) {
+      agent.get('/chars')
+        .expect(401, done);
+    });
+  });
+  describe('/synths', function () {
+    it('should reject unauthorized access', function (done) {
+      agent.get('/synths')
+        .expect(401, done);
+    });
+  });
   describe('/login', function() {
     it('POST should reject an incorrect username/password', function(done) {
       agent.post('/login')
