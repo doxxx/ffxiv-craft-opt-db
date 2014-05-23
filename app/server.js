@@ -40,10 +40,14 @@ passport.deserializeUser(models.User.deserializeUser());
 
 //CORS middleware
 var allowCrossDomain = function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', config.allowedDomains);
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
-  res.header('Access-Control-Allow-Credentials', 'true');
+  var origin = req.header('Origin');
+  if (origin === 'http://localhost:8001' || origin === 'http://ffxiv.lokyst.net') {
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type,Content-Length,Cache-Control,Pragma,Origin,Connection,Host,Cookie,Accept');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Expose-Headers', 'Access-Control-Allow-Origin');
+  }
 
   next();
 };
