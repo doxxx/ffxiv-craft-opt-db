@@ -237,7 +237,7 @@ module.exports = {
     }
     else {
       var synth = stripModelMetadata(req.synth);
-      delete synth.user_id;
+      delete synth.userID;
       res.json(synth);
     }
   },
@@ -253,7 +253,7 @@ module.exports = {
         }
         else {
           var synth = stripModelMetadata(req.synth);
-          delete synth.user_id;
+          delete synth.userID;
           res.json(synth);
         }
       });

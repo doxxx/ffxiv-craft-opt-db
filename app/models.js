@@ -42,7 +42,7 @@ userSchema.statics.createUser = function(username, password, cb) {
 };
 
 userSchema.methods.findAllSynths = function (cb) {
-  this.model('Synth').find({ user_id: this._id }, function (err, synths) {
+  this.model('Synth').find({ userID: this._id }, function (err, synths) {
     if (err) {
       cb(err, null);
     }
@@ -54,7 +54,7 @@ userSchema.methods.findAllSynths = function (cb) {
 
 userSchema.methods.findSynthByName = function (name, cb) {
   var Synth = this.model('Synth');
-  Synth.findOne({ user_id: this._id, name: name }, function (err, synth) {
+  Synth.findOne({ userID: this._id, name: name }, function (err, synth) {
     if (err) {
       if (cb) cb(err, null);
     }
@@ -67,7 +67,7 @@ userSchema.methods.findSynthByName = function (name, cb) {
 userSchema.methods.createSynth = function (contents, cb) {
   var Synth = this.model('Synth');
   var synth = {
-    user_id: this._id
+    userID: this._id
   };
   _.extend(synth, contents);
   synth = new Synth(synth);
@@ -82,16 +82,41 @@ userSchema.methods.createSynth = function (contents, cb) {
 };
 
 var synthSchema = mongoose.Schema({
-  user_id: mongoose.Schema.Types.ObjectId,
+  userID: mongoose.Schema.Types.ObjectId,
   name: String,
-  recipeName: String,
-  level: Number,
-  difficulty: Number,
-  durability: Number,
-  max_quality: Number
+  recipe: {
+    name: String,
+    cls: String,
+    level: Number,
+    difficulty: Number,
+    durability: Number,
+    startQuality: Number,
+    maxQuality: Number
+  },
+  bonusStats: {
+    craftsmanship: Number,
+    control: Number,
+    cp: Number
+  },
+  sequence: [String],
+  sequenceSettings: {
+    debug: Boolean,
+    maxMontecarloRuns: Number,
+    maxTricksUses: Number,
+    reliabilityPercent: Number,
+    seed: Number,
+    specifySeed: Boolean,
+    useConditions: Boolean
+  },
+  solver: {
+    algorithm: String,
+    generations: Number,
+    penaltyWeight: Number,
+    population: Number
+  }
 });
 
-synthSchema.index({user_id: 1, name: 1});
+synthSchema.index({userID: 1, name: 1});
 
 exports.User = mongoose.model('User', userSchema);
 exports.Synth = mongoose.model('Synth', synthSchema);

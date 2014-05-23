@@ -47,11 +47,36 @@ describe('ffxiv-craft-opt-db', function() {
   };
   var exampleSynth = {
     name: 'Test Synth',
-    recipeName: 'Some Recipe',
-    level: 1,
-    difficulty: 2,
-    durability: 3,
-    max_quality: 4
+    recipe: {
+      name: 'Test Recipe',
+      cls: 'Alchemist',
+      level: 12,
+      difficulty: 34,
+      durability: 56,
+      startQuality: 78,
+      maxQuality: 90
+    },
+    bonusStats: {
+      craftsmanship: 1,
+      control: 2,
+      cp: 3
+    },
+    sequence: ['basicSynthesis', 'basicTouch'],
+    sequenceSettings: {
+      debug: false,
+      maxMontecarloRuns: 200,
+      maxTricksUses: 0,
+      reliabilityPercent: 100,
+      seed: 0,
+      specifySeed: false,
+      useConditions: true
+    },
+    solver: {
+      algorithm: 'eaSimple',
+      generations: 200,
+      penaltyWeight: 10000,
+      population: 500
+    }
   };
   var charURI,
     synthURI;
@@ -205,11 +230,11 @@ describe('ffxiv-craft-opt-db', function() {
     it('PUT should replace synth details', function (done) {
       var updatedSynth = _.clone(exampleSynth);
       updatedSynth.name += 'xxx';
-      updatedSynth.recipeName += 'xxx';
+      updatedSynth.recipe.name += 'xxx';
       agent.put(synthURI)
         .send({
           name: updatedSynth.name,
-          recipeName: updatedSynth.recipeName
+          recipe: updatedSynth.recipe
         })
         .expect(200)
         .end(function (err, res) {
