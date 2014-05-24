@@ -8,6 +8,9 @@ var _ = require('underscore');
 describe('ffxiv-craft-opt-db', function() {
   var user;
 
+  // More forgiving timeout for travis-ci
+  this.timeout(5000);
+
   function initData(done) {
     models.User.remove({}, function() {
       models.Synth.remove({}, done);
