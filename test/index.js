@@ -114,6 +114,7 @@ describe('ffxiv-craft-opt-db', function() {
     });
   });
   describe('/login', function() {
+    var token;
     it('POST should reject an incorrect username/password', function(done) {
       agent.post('/login')
         .send({username: 'does.not@exist', password: 'blah'})
@@ -122,7 +123,33 @@ describe('ffxiv-craft-opt-db', function() {
     it('POST should accept a correct username and password', function(done) {
       agent.post('/login')
         .send({username: 'foo@bar.com', password: '123'})
-        .expect(200, done);
+        .expect(200)
+        .end(function(err, res) {
+          if (err) throw err;
+          expect(res.body).to.be.an('object');
+          expect(res.body).to.have.key('token');
+          expect(res.body.token).to.have.length(96);
+          token = res.body.token;
+          done();
+        });
+    });
+    it('POST should reject invalid security token', function (done) {
+      agent.post('/login')
+        .send({token:'blah'})
+        .expect(401, done);
+    });
+    it('POST should accept valid security token', function (done) {
+      agent.post('/login')
+        .send({token: token})
+        .expect(200)
+        .end(function (err, res) {
+          if (err) throw err;
+          expect(res.body).to.be.an('object');
+          expect(res.body).to.have.key('token');
+          expect(res.body.token).to.have.length(96);
+          expect(res.body.token).to.be(token);
+          done();
+        });
     });
   });
   describe('/chars', function () {

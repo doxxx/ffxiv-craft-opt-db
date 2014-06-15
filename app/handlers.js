@@ -1,5 +1,7 @@
 var _ = require('underscore');
 var models = require('./models');
+var crypto = require('crypto');
+var passport = require('passport');
 
 var EMAIL_RE = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
 
@@ -30,8 +32,47 @@ function stripModelMetadata(obj) {
 }
 
 module.exports = {
-  loginSuccess: function(req, res) {
-    res.send(200);
+  login: function(req, res, next) {
+    if (req.body.token) {
+      models.User.findByToken(req.body.token, function (err, user) {
+        if (err) return next(err);
+        if (!user) return res.send(401);
+        var now = new Date();
+        if (user.tokenExpiry.getTime() < now.getTime()) return res.send(401);
+        req.login(user, function (err) {
+          if (err) return next(err);
+          var expiry = new Date();
+          expiry.setDate(expiry.getDate() + 7);
+          user.tokenExpiry = expiry;
+          user.save(function (err) {
+            if (err) return next(err);
+            res.send(200, { token: req.body.token });
+          });
+        });
+      });
+    }
+    else {
+      passport.authenticate('local', function (err, user, info) {
+        if (err) return next(err);
+        if (!user) {
+          return res.send(401, info);
+        }
+        req.logIn(user, function (err) {
+          if (err) return next(err);
+          crypto.randomBytes(48, function(ex, buf) {
+            var token = buf.toString('hex');
+            var expiry = new Date();
+            expiry.setDate(expiry.getDate() + 7);
+            req.user.token = token;
+            req.user.tokenExpiry = expiry;
+            req.user.save(function (err) {
+              if (err) return next(err);
+              res.send(200, { token: token });
+            });
+          });
+        });
+      })(req, res, next);
+    }
   },
 
   logout: function (req, res) {

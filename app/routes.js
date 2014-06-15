@@ -8,7 +8,7 @@ function ensureAuthenticated(req, res, next) {
 exports.setup = function(app, handlers) {
   app.post('/users', handlers.newUser);
 
-  app.post('/login', passport.authenticate('local'), handlers.loginSuccess);
+  app.post('/login', handlers.login);
   app.post('/logout', handlers.logout);
 
   app.all('/chars', ensureAuthenticated);

@@ -21,7 +21,9 @@ var charSchema = mongoose.Schema({
 var userSchema = mongoose.Schema({
   username: String,
   password: String,
-  chars: [charSchema]
+  chars: [charSchema],
+  token: String,
+  tokenExpiry: Date
 });
 
 userSchema.plugin(passportLocalMongoose);
@@ -38,6 +40,15 @@ userSchema.statics.createUser = function(username, password, cb) {
     else {
       if (cb) cb(null, user);
     }
+  });
+};
+
+userSchema.statics.findByToken = function (token, cb) {
+  var User = this.model('User');
+  User.findOne({token: token}, function (err, user) {
+    if (err) return cb(err);
+    if (!user) return cb(null, null);
+    cb(null, user);
   });
 };
 
